@@ -1,15 +1,32 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
+import cors from "cors";
+
 import { service } from "./service.js";
 import { errorHandler, verifyToken } from "./middlewares.js";
 import { repo } from "./repository.js";
 
 const server = express();
-server.use(express.json());
+
+server.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 server.use(cookieParser());
+server.use(express.json());
+server.use((req, res, next) => {
+  console.log(`${req.url}`);
+  next();
+});
+server.get("/api/health", (req, res) => {
+  res.send("server is healthy");
+});
 
 server.post("/api/signup", async (req, res) => {
+  console.log("hello from signup");
   const { username, password, email } = req.body;
   const result = await service.signup(username, password, email);
   res.status(201).json({ message: `Saved new user: ${result}` });
@@ -36,12 +53,12 @@ server.get("/api/profile", verifyToken, async (req, res) => {
 });
 
 server.get("/api/me", verifyToken, async (req, res) => {
+  console.log("from me");
   const { user } = req.user;
-  res.json(user);
+  res.json({ user: user });
 });
 
 server.use(errorHandler);
+const PORT = process.env.PORT || 3000;
 
-server.listen(process.env.PORT, () =>
-  console.log(`Server is listening on port ${process.env.PORT}`),
-);
+server.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
