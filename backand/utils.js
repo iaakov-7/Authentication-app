@@ -42,3 +42,19 @@ export function validDuplicateUsername(user) {
     throw error;
   }
 }
+
+export function validIfUserExists(user) {
+  if (!user) {
+    const error = new Error("משתמש לא נמצא");
+    error.statusCode = 404;
+    throw error;
+  }
+}
+
+export function validIsMatchPasswors(isMatchPassord) {
+  if (!isMatchPassord) {
+    const error = new Error("הסיסמא לא מתאימה");
+    error.statusCode = 401;
+    throw error;
+  }
+}

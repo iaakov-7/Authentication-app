@@ -14,6 +14,20 @@ server.post("/api/signup", async (req, res) => {
   res.status(201).json({ message: `Saved new user: ${result}` });
 });
 
+server.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
+  const token = await service.login(username, password);
+  res.cookie("token", token, {
+    httpOnly: true,
+  });
+  res.json({ message: "התחברת בהצלחה" });
+});
+
+server.post("/api/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "התנתקת בהצלחה" });
+});
+
 server.use(errorHandler);
 
 server.listen(process.env.PORT, () =>
