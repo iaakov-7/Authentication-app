@@ -2,7 +2,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { service } from "./service.js";
-import { errorHandler } from "./middlewares.js";
+import { errorHandler, verifyToken } from "./middlewares.js";
+import { repo } from "./repository.js";
 
 const server = express();
 server.use(express.json());
@@ -26,6 +27,17 @@ server.post("/api/login", async (req, res) => {
 server.post("/api/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ message: "התנתקת בהצלחה" });
+});
+
+server.get("/api/profile", verifyToken, async (req, res) => {
+  const username = req.user.username;
+  const user = await repo.findUserByUsername(username);
+  res.json({ name: user.username, email: user.email });
+});
+
+server.get("/api/me", verifyToken, async (req, res) => {
+  const { user } = req.user;
+  res.json(user);
 });
 
 server.use(errorHandler);
