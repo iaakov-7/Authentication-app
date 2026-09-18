@@ -54,8 +54,7 @@ server.get("/api/profile", verifyToken, async (req, res) => {
 
 server.get("/api/me", verifyToken, async (req, res) => {
   console.log("from me");
-  const { user } = req.user;
-  res.json({ user: user });
+  res.json({ user: req.user });
 });
 
 server.use(errorHandler);

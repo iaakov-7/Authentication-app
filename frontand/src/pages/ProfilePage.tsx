@@ -38,7 +38,7 @@ const ProfilePage = () => {
       });
       const data = await response.json();
       console.log(data);
-      if (!data.name) {
+      if (data.name) {
         setDetails(data);
       } else {
         setMessage(data.message);
@@ -49,7 +49,7 @@ const ProfilePage = () => {
   };
   const handleLogout = async () => {
     await fetch("http://localhost:3000/api/logout", {
-      method: "POst",
+      method: "POST",
       credentials: "include",
     });
     setIsToken(false);
